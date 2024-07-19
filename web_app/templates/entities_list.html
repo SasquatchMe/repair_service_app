@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Entities List</title>
+</head>
+<body>
+    <h1>Entities List</h1>
+    <form action="/entities" method="post">
+        <h2>Add New Entity</h2>
+        <label for="name">Entity Name:</label>
+        <input type="text" id="name" name="name" required>
+        <br>
+        <input type="submit" value="Add Entity">
+    </form>
+    <h2>Existing Entities</h2>
+    <ul>
+        {% for entity in entities %}
+        <li>
+            {{ entity[0] }} - {{ entity[1] }}
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+</head>
+<body>
+    <h1>Users</h1>
+    <table border="1">
+        <tr>
+            <th>Username</th>
+            <th>Address</th>
+            <th>Entity</th>
+        </tr>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.login }}</td>
+            <td>{{ user.address }}</td>
+            <td>{{ user.entity_id.name }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Add User</h2>
+    <form action="{{ url_for('add_user') }}" method="post">
+        <label for="login">Username:</label>
+        <input type="text" id="login" name="login" required><br>
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" required><br>
+        <label for="entity_id">Entity Name:</label>
+        <select id="entity_id" name="entity_id" required>
+            {% for entity in entities %}
+            <option value="{{ entity.id }}">{{ entity.name }}</option>
+            {% endfor %}
+        </select><br>
+        <button type="submit">Add User</button>
+    </form>
+</body>
+</html>

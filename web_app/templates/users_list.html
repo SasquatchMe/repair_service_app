@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Users List</title>
+</head>
+<body>
+    <h1>Users List</h1>
+    <form action="/users" method="post">
+        <h2>Add New User</h2>
+        <label for="login">Login:</label>
+        <input type="text" id="login" name="login" required>
+        <br>
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" required>
+        <br>
+        <label for="entity_id">Company:</label>
+        <select id="entity_id" name="entity_id" required>
+            {% for entity in entities %}
+            <option value="{{ entity.entity_id }}">{{ entity.entity_name }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <input type="submit" value="Add User">
+    </form>
+    <h2>Existing Users</h2>
+    <ul>
+        {% for user in users %}
+        <li>
+            {{ user.login }} - {{ user.address }} - {{ user.entity_name }}
+            <a href="{{ url_for('edit_user', id=user.id) }}">Edit</a>
+            <form action="{{ url_for('delete_user', id=user.id) }}" method="post" style="display:inline;">
+                <input type="submit" value="Delete">
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
