@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Компании</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+</head>
+<body>
+<ul>
+  <li><a href="{{ url_for('orders_list') }}">Заявки</a></li>
+  <li><a href="{{ url_for('users_list') }}">Пользователи</a></li>
+  <li><a href="{{ url_for('entities_list') }}">Юр. Лица</a></li>
+</ul>
+
+{% block content %}{% endblock %}
+
+</body>
+</html>

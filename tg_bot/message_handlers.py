@@ -29,7 +29,6 @@ def login_get(message: Message):
         with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
             data['login'] = login
     else:
-        bot.delete_state(message.from_user.id, message.chat.id)
         bot.send_message(message.chat.id, 'Неверный логин. Проверьте корректность введенного логина!\n'
                                           'Если Вы не получили логин - обратитесь к нашему менеджеру')
 
@@ -103,3 +102,9 @@ def get_model_image(message: Message):
 @bot.message_handler(state=CRMStates.confirm_order)
 def confirm_order(message: Message):
     bot.send_message(message.chat.id, 'OK')
+
+
+@bot.message_handler(state="*")
+def undefined_message(message: Message):
+    cur_state = bot.get_state(message.from_user.id, message.chat.id)
+    print(cur_state)

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h1>Добавить компанию</h1>
+    <form action="{{ url_for('add_entity') }}" method="post">
+        <label for="entity_name">Название компании:</label>
+        <input type="text" id="entity_name" name="entity_name" required><br>
+        <button type="submit">Добавить компанию</button>
+    </form>
+
+    <h2>Список Компаний</h2>
+    <table id="entities_table" border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Наименование компании</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td>{{ entity.id }}</td>
+                <td>{{ entity.name }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#entities_table').DataTable();
+    });
+</script>
+{% endblock %}

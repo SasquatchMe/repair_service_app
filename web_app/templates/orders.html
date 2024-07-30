@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h1>Список заявок</h1>
+    <table id="orders_table" border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Юр. Лицо</th>
+                <th>Адрес</th>
+                <th>Статус</th>
+                <th>Дата создания</th>
+                <th>Действие</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.login_id.entity_id.name }}</td>
+                <td>{{ order.login_id.address }}</td>
+                <td>{{ order.status_id.status }}</td>
+                <td>{{ order.date_create }}</td>
+                <td>
+                    <a href="#" class="action-icon" data-id="{{ order.id }}" data-action="approve">
+                        <img src="/static/icons/check.svg" alt="Approve" title="Одобрить">
+                    </a>
+                    <a href="#" class="action-icon" data-id="{{ order.id }}" data-action="cancel">
+                        <img src="/static/icons/cross.svg" alt="Cancel" title="Отменить">
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#orders_table').DataTable();
+
+        $('.action-icon').click(function(event) {
+            event.preventDefault();
+            var orderId = $(this).data('id');
+            var action = $(this).data('action');
+            var newStatus = (action === 'approve') ? 1 : -1; // 1 for approve, -1 for cancel
+
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

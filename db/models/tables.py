@@ -23,19 +23,21 @@ class Status(BaseModel):
 
 
 class User(BaseModel):
-    login = CharField(primary_key=True)
+    id = AutoField(primary_key=True)
+    login = CharField()
     address = CharField(null=False)
     entity_id = ForeignKeyField(Entity, backref='users')
 
 
 class Order(BaseModel):
     id = AutoField(primary_key=True)
-    login = ForeignKeyField(User)
+    login_id = ForeignKeyField(User)
     status_id = ForeignKeyField(Status)
     date_create = DateTimeField(default=datetime.datetime.now())
 
 
 def create_models():
     db.create_tables(BaseModel.__subclasses__())
+
 
 

@@ -8,7 +8,7 @@ def check_user_exist(login: str):
         cursor.execute(
             """
             SELECT * 
-            FROM users
+            FROM user
             WHERE login = ?
             """, [login]
         )

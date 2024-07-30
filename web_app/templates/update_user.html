@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h1>Изменить юзера</h1>
+    <form action="{{ url_for('save_user', login=user.login) }}" method="post">
+        <label for="login">Логин:</label>
+        <input type="text" id="login" name="login" value="{{ user.login }}" required><br>
+        <label for="address">Адрес:</label>
+        <input type="text" id="address" name="address" value="{{ user.address }}" required><br>
+        <label for="entity_id">Наименование компании:</label>
+        <select id="entity_id" name="entity_id" required>
+            {% for entity in entities %}
+            <option value="{{ entity.id }}" {% if entity.id == user.entity_id.id %}selected{% endif %}>{{ entity.name }}</option>
+            {% endfor %}
+        </select><br>
+        <button type="submit">Сохранить</button>
+    </form>
+</div>
+{% endblock %}
