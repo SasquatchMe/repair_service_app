@@ -1,13 +1,42 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container">
-    <h1>Детали заявки</h1>
-    <p>ID: {{ order.id }}</p>
-    <p>Тип заявки: {{ order.order_type }}</p>
-    <p>Тип неполадки: {{ order.breaking_type }}</p>
-    <p>Адрес: {{ order.address }}</p>
-    <p>Дата создания: {{ order.date_create }}</p>
-    <p>Статус: {{ order.status }}</p>
-    <a href="{{ url_for('order_list') }}">Назад к списку заявок</a>
+<div class="container my-4">
+    <div class="card">
+        <div class="card-header">
+            <h1>Детали заявки</h1>
+        </div>
+        <div class="card-body">
+            <p><strong>ID:</strong> {{ order.id }}</p>
+            <p><strong>Тип заявки:</strong> {{ order.order_type_id.order_type }}</p>
+            <p><strong>Тип неполадки:</strong> {{ order.breaking_type_id.breaking_type }}</p>
+            <p><strong>Описание поломки:</strong> {{ order.desc }}</p>
+            <p><strong>Адрес:</strong> {{ order.user_id.object_id.address }}</p>
+            <p><strong>Дата создания:</strong> {{ order.date_create }}</p>
+            <p><strong>Статус:</strong> {{ order.status_id.status }}</p>
+            <p><strong>Комментарий:</strong> {{ order.comment }}</p>
+
+            <!-- Добавление фотографий -->
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Фото поломки:</h5>
+                    {% if order.breaking_image_path %}
+                        <img src="/static/no_photo/No-Image-Placeholder.svg"  alt="Фото поломки">
+                    {% else %}
+                        <img src="/static/icons/check.svg" alt="Фото нет">
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <h5>Фото сервисной наклейки:</h5>
+                    {% if order.service_sticker_image_path %}
+                        <img src="/CRM_tg_bot/web_app/static/no_photo/No-Image-Placeholder.svg"  alt="Фото сервисной наклейки">
+                    {% else %}
+                        <img src="../CRM_tg_bot/web_app/static/no_photo/No-Image-Placeholder.svg"  alt="Фото нет">
+                    {% endif %}
+                </div>
+            </div>
+
+            <a href="{{ url_for('orders_list') }}" class="btn btn-primary mt-3">Назад к списку заявок</a>
+        </div>
+    </div>
 </div>
 {% endblock %}

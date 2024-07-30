@@ -31,6 +31,7 @@ class Object(BaseModel):
 
 class User(BaseModel):
     id = AutoField(primary_key=True)
+    phone = CharField()
     tg_id = CharField()
     object_id = ForeignKeyField(Object)
 
@@ -50,10 +51,13 @@ class Order(BaseModel):
     order_type_id = ForeignKeyField(OrderType)
     breaking_type_id = ForeignKeyField(BreakingType)
     user_id = ForeignKeyField(User)
-    status_id = ForeignKeyField(Status)
+    status_id = ForeignKeyField(Status, default=1)
     date_create = DateTimeField(default=datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
-    overall_image_path = CharField()
+    breaking_image_path = CharField()
     service_sticker_image_path = CharField()
+    model_name = CharField()
+    desc = CharField()
+    phone = CharField()
 
 
 def create_models():

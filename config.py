@@ -7,8 +7,9 @@ else:
     load_dotenv()
 
 BOT_TOKEN = os.getenv('BOT_TOKEN')
-
+BASE_PATH = os.path.abspath('/Users/Androidnek/PycharmProjects')
 DATABASE_PATH = os.path.abspath('/Users/Androidnek/PycharmProjects/CRM_tg_bot/CRM_SERVICE.db')
+
 
 DEFAULT_STATUSES = [
     'Заявка сформирована',

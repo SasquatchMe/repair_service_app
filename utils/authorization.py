@@ -14,10 +14,10 @@ def check_object_exist(login: str):
     return True if check else False
 
 
-def register_user_exist(tg_id, login):
+def register_user_exist(tg_id, login, phone):
     user = User.get_or_none(User.tg_id == tg_id)
     object_id = Object.select(Object.id).where(Object.login == login)
     if not user:
-        User.create(tg_id=tg_id, object_id=object_id)
+        User.create(tg_id=tg_id, object_id=object_id, phone=phone)
         return 'Register user'
     return 'User already registered'

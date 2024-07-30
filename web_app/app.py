@@ -1,5 +1,7 @@
 from db.models.tables import db, User, Entity, Order, Object
-from flask import Flask, request, render_template, redirect, url_for, flash
+from flask import Flask, request, render_template, redirect, url_for, flash, send_from_directory
+from config import BASE_PATH
+from loguru import logger
 
 app = Flask(__name__)
 
@@ -62,6 +64,11 @@ def add_entity():
     Entity.create(name=entity_name)
     return redirect(url_for('entities_list'))
 
+
+@app.route('/photos/<path:filename>')
+def get_photo(filename):
+    logger.debug(BASE_PATH + filename)
+    return send_from_directory(BASE_PATH, filename)
 
 if __name__ == '__main__':
     app.run(debug=True)
