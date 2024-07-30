@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container">
-    <h1>Добавить юзера</h1>
-    <form action="{{ url_for('add_user') }}" method="post" class="compact-form">
+    <h1>Добавить точку</h1>
+    <form action="{{ url_for('add_object') }}" method="post" class="compact-form">
         <label for="login">Логин:</label>
         <input type="text" id="login" name="login" required><br>
         <label for="address">Адрес:</label>
@@ -16,8 +16,8 @@
         <button type="submit">Добавить</button>
     </form>
 
-    <h2>Список юзеров</h2>
-    <table id="users_table" border="1">
+    <h2>Список точек</h2>
+    <table id="objects_table" border="1">
         <thead>
         <tr>
             <th>ID</th>
@@ -28,14 +28,14 @@
         </tr>
         </thead>
         <tbody>
-        {% for user in users %}
+        {% for object in objects %}
         <tr>
-            <td>{{ user.id }}</td>
-            <td>{{ user.login }}</td>
-            <td>{{ user.address }}</td>
-            <td>{{ user.entity_id.name }}</td>
+            <td>{{ object.id }}</td>
+            <td>{{ object.login }}</td>
+            <td>{{ object.address }}</td>
+            <td>{{ object.entity_id.name }}</td>
             <td>
-                <form action="{{ url_for('update_user', login=user.login) }}" method="get" style="display:inline;">
+                <form action="{{ url_for('update_object', login=object.login) }}" method="get" style="display:inline;">
                     <button type="submit">Изменить</button>
                 </form>
             </td>
@@ -46,7 +46,7 @@
 </div>
 <script>
     $(document).ready(function() {
-        $('#users_table').DataTable();
+        $('#objects_table').DataTable();
     });
 </script>
 {% endblock %}

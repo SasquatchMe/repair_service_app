@@ -1,18 +1,23 @@
-import sqlite3
-from config import DATABASE_PATH
+from db.models.tables import Object, User
 
 
-def check_user_exist(login: str):
-    with sqlite3.connect(DATABASE_PATH) as conn:
-        cursor = conn.cursor()
-        cursor.execute(
-            """
-            SELECT * 
-            FROM user
-            WHERE login = ?
-            """, [login]
-        )
-        check = cursor.fetchone()
-        return True if check else False
+def tg_user_exist(tg_id):
+    user = User.get_or_none(User.tg_id == tg_id)
+    if user:
+        return True
+    return False
 
 
+def check_object_exist(login: str):
+    check = Object.select().where(Object.login == login)
+
+    return True if check else False
+
+
+def register_user_exist(tg_id, login):
+    user = User.get_or_none(User.tg_id == tg_id)
+    object_id = Object.select(Object.id).where(Object.login == login)
+    if not user:
+        User.create(tg_id=tg_id, object_id=object_id)
+        return 'Register user'
+    return 'User already registered'

@@ -1,48 +1,53 @@
-from db.models.tables import db, User, Entity, Order
+from db.models.tables import db, User, Entity, Order, Object
 from flask import Flask, request, render_template, redirect, url_for, flash
 
 app = Flask(__name__)
 
 
 @app.route('/')
-def users_list():
-    users = User.select()
+def objects_list():
+    objects = Object.select()
     entities = Entity.select()
-    return render_template('users.html', users=users, entities=entities)
+    return render_template('objects.html', objects=objects, entities=entities)
 
 
 # Обработка формы добавления пользователя
-@app.route('/add_user', methods=['POST'])
-def add_user():
-    username = request.form['login']
+@app.route('/add_object', methods=['POST'])
+def add_object():
+    login = request.form['login']
     address = request.form['address']
     entity_id = request.form['entity_id']
-    print(entity_id)
-    User.create(login=username, address=address, entity_id=entity_id)
-    return redirect(url_for('users_list'))
+    Object.create(login=login, address=address, entity_id=entity_id)
+    return redirect(url_for('objects_list'))
 
 
-@app.route('/update_user/<login>', methods=['GET'])
-def update_user(login):
-    user = User.get(User.login == login)
+@app.route('/update_object/<login>', methods=['GET'])
+def update_object(login):
+    object = Object.get(Object.login == login)
     entities = Entity.select()
-    return render_template('update_user.html', user=user, entities=entities)
+    return render_template('update_object.html', object=object, entities=entities)
 
 
-@app.route('/save_user/<login>', methods=['POST'])
-def save_user(login):
-    user = User.get(User.login == login)
-    user.login = request.form['login']
-    user.address = request.form['address']
-    user.entity_id = Entity.get(Entity.id == request.form['entity_id'])
-    user.save()
-    return redirect(url_for('users_list'))
+@app.route('/save_object/<login>', methods=['POST'])
+def save_object(login):
+    object = Object.get(Object.login == login)
+    object.login = request.form['login']
+    object.address = request.form['address']
+    object.entity_id = Entity.get(Entity.id == request.form['entity_id'])
+    object.save()
+    return redirect(url_for('objects_list'))
 
 
 @app.route('/orders', methods=['GET'])
 def orders_list():
     orders = Order.select()
     return render_template('orders.html', orders=orders)
+
+
+@app.route('/order/<int:order_id>')
+def order_detail(order_id):
+    order = Order.get(Order.id == order_id)
+    return render_template('order_detail.html', order=order)
 
 
 @app.route('/entities', methods=['GET'])
