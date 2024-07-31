@@ -7,9 +7,14 @@ else:
     load_dotenv()
 
 BOT_TOKEN = os.getenv('BOT_TOKEN')
-BASE_PATH = os.path.abspath('/Users/Androidnek/PycharmProjects')
+WORKDIR = os.path.abspath('/Users/Androidnek/PycharmProjects/CRM_tg_bot/')
+WEB_APP_PATH = os.path.abspath('/Users/Androidnek/PycharmProjects/CRM_tg_bot/web_app/')
 DATABASE_PATH = os.path.abspath('/Users/Androidnek/PycharmProjects/CRM_tg_bot/CRM_SERVICE.db')
 
+DEAFAULT_COMMANDS = (
+    ['start', 'Запустить бота'],
+    ['cancel', 'Выйти в главное меню']
+)
 
 DEFAULT_STATUSES = [
     'Заявка сформирована',
@@ -30,4 +35,9 @@ DEFAULT_BREAKING_TYPES = [
     'Холодильное оборудование',
     'Мебель',
     'Барное оборудование',
+]
+
+DEFAULT_ENTITIES = [
+    'ИП Горев Андраник Куркенович',
+    'ИП Найденова Алина Вячеславовна'
 ]

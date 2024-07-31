@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h1>Авторизация</h1>
+    <form action="{{ url_for('login') }}" method="post" class="compact-form">
+        <label for="username">Имя пользователя:</label>
+        <input type="text" id="username" name="username" required><br>
+        
+        <label for="password">Пароль:</label>
+        <input type="password" id="password" name="password" required><br>
+        
+        <button type="submit">Войти</button>
+    </form>
+</div>
+{% endblock %}

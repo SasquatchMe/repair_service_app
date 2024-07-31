@@ -1,11 +1,10 @@
 from db.models.tables import Order
-from db.query_to_db.query_to_db import get_user_id_by_tg_id
+from db.query_to_db.query_to_db import get_user_id_by_tg_id, get_order_by_order_id
 from loguru import logger
 
 
-def get_message_from_order_db(tg_id):
-    user_id = get_user_id_by_tg_id(tg_id)
-    order: Order = Order.get(Order.user_id == user_id)
+def get_message_from_order_db(order_id):
+    order: Order = get_order_by_order_id(order_id)
     msg = (f"Тип заявки: {order.order_type_id.order_type}\n"
            f"Тип поломки: {order.breaking_type_id.breaking_type}\n"
            f"Дата создания: {order.date_create}\n"

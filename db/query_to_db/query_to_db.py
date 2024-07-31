@@ -29,3 +29,12 @@ def get_user_phone_by_tg_id(tg_id):
 def get_user_id_by_tg_id(tg_id):
     user = User.get(User.tg_id == tg_id)
     return user.id
+
+
+def get_order_by_order_id(order_id):
+    order = Order.get(Order.id == order_id)
+    return order
+
+def get_object_id_by_tg_id(tg_id):
+    user = User.get(User.tg_id == tg_id)
+    return user.object_id

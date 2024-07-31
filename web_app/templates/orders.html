@@ -2,6 +2,7 @@
 {% block content %}
 <div class="container">
     <h1>Список заявок</h1>
+    <button id="createOrderBtn" class="btn">Создать заявку</button>
     <table id="orders_table" border="1">
         <thead>
             <tr>
@@ -19,7 +20,7 @@
                 <td><a href="{{ url_for('order_detail', order_id=order.id) }}">{{ order.id }}</a></td>
                 <td>{{ order.order_type_id.order_type }}</td>
                 <td>{{ order.breaking_type_id.breaking_type}}</td>
-                <td>{{ order.user_id.object_id.address}}</td>
+                <td>{{ order.object_id.address}}</td>
                 <td>{{ order.date_create }}</td>
                 <td>{{ order.status_id.status }}</td>
             </tr>
@@ -28,19 +29,97 @@
     </table>
 </div>
 
+<!-- Modal Structure -->
+<div id="createOrderModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Создать заявку</h2>
+        <form id="createOrderForm" class="compact-form">
+            <label for="order_type_id">Тип заявки</label>
+            <select id="order_type_id" name="order_type_id"></select>
+
+            <label for="breaking_type_id">Тип неполадки</label>
+            <select id="breaking_type_id" name="breaking_type_id"></select>
+
+            <label for="object_id">Точка</label>
+            <select id="object_id" name="object_id"></select>
+
+            <label for="model_name">Название модели</label>
+            <input type="text" id="model_name" name="model_name" required>
+
+            <label for="desc">Описание</label>
+            <input type="text" id="desc" name="desc">
+
+            <label for="phone">Телефон</label>
+            <input type="text" id="phone" name="phone" required>
+
+            <label for="comment">Комментарий</label>
+            <input type="text" id="comment" name="comment">
+
+            <button type="button" id="submitOrderBtn">Создать</button>
+        </form>
+    </div>
+</div>
+
 <script>
     $(document).ready(function() {
         $('#orders_table').DataTable();
 
-        $('.action-icon').click(function(event) {
-            event.preventDefault();
-            var orderId = $(this).data('id');
-            var action = $(this).data('action');
-            var newStatus = (action === 'approve') ? 1 : -1; // 1 for approve, -1 for cancel
+        var modal = document.getElementById('createOrderModal');
+        var btn = document.getElementById('createOrderBtn');
+        var span = document.getElementsByClassName('close')[0];
 
+        btn.onclick = function() {
+            modal.style.display = 'block';
+        }
+
+        span.onclick = function() {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        $('#submitOrderBtn').click(function() {
+            var formData = $('#createOrderForm').serialize();
+            $.ajax({
+                type: 'POST',
+                url: '{{ url_for("create_order") }}',
+                data: formData,
+                success: function(response) {
+                    alert('Заявка успешно создана');
+                    modal.style.display = 'none';
+                    location.reload();
+                },
+                error: function(response) {
+                    alert('Ошибка при создании заявки');
                 }
             });
         });
+
+        fetchOptions();
     });
+
+    function fetchOptions() {
+        $.get('{{ url_for("get_order_types") }}', function(data) {
+            populateSelect($('#order_type_id'), data);
+        });
+        $.get('{{ url_for("get_breaking_types") }}', function(data) {
+            populateSelect($('#breaking_type_id'), data);
+        });
+        $.get('{{ url_for("get_objects") }}', function(data) {
+            populateSelect($('#object_id'), data);
+        });
+    }
+
+    function populateSelect(selectElement, data) {
+        selectElement.empty();
+        data.forEach(function(item) {
+            selectElement.append(new Option(item.name, item.id));
+        });
+    }
 </script>
 {% endblock %}

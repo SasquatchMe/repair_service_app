@@ -4,7 +4,7 @@ import telebot.types
 from loguru import logger
 
 from db.query_to_db.create_order_in_db import create_order
-from db.query_to_db.query_to_db import get_order_type_id, get_breaking_type_id
+from db.query_to_db.query_to_db import get_order_type_id, get_breaking_type_id, get_order_by_order_id
 from tg_bot.bot_instance import bot
 from telebot.types import Message
 
@@ -19,6 +19,7 @@ from pathlib import Path
 from tg_bot.messages_text.messages import *
 from utils.convert_to_msg import get_message_from_order_db
 from telebot.types import InputMediaPhoto
+from config import WORKDIR, WEB_APP_PATH
 
 
 @bot.message_handler(commands=['start'])
@@ -83,7 +84,7 @@ def get_brand_name(message: Message):
 
 @bot.message_handler(state=CRMStates.breaking_type)
 def get_model(message: Message):
-    bot.send_message(message.chat.id, text=description_of_breaking)
+    bot.send_message(message.chat.id, text=description_of_breaking, reply_markup=telebot.types.ReplyKeyboardRemove())
     bot.set_state(message.from_user.id, CRMStates.desc, message.chat.id)
     with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
         data['breaking_type_id'] = get_breaking_type_id(message.text)
@@ -100,13 +101,15 @@ def get_desc(message: Message):
 @bot.message_handler(state=CRMStates.breaking_image, content_types=['photo', 'text'])
 def get_model_image(message: Message):
     if message.content_type == 'photo':
-        path = f'../CRM_tg_bot/images/{message.chat.id}/{datetime.datetime.now().strftime("%Y%m%d")}/breaking_photo/'
+        path = f'{WORKDIR}/web_app/static/images/{message.chat.id}/{datetime.datetime.now().strftime("%Y%m%d")}/breaking_photo/'
         Path(path).mkdir(parents=True, exist_ok=True)
         image_info = bot.get_file(message.photo[-1].file_id)
         downloaded_image = bot.download_file(image_info.file_path)
         src = path + image_info.file_path.split('/')[1]
+        logger.debug(src)
+
         with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
-            data['breaking_image_path'] = src
+            data['breaking_image_path'] = src.split('web_app')[1]
 
         with open(src, 'wb') as new_image:
             new_image.write(downloaded_image)
@@ -121,29 +124,11 @@ def get_model_image(message: Message):
         bot.set_state(message.from_user.id, CRMStates.model_name, message.chat.id)
         bot.send_message(message.chat.id, text=model_name)
 
-        # bot.send_message(message.chat.id, 'Данные приняты. Формируем Ваш заказ, еще мгновение...')
-
-        # with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
-        #     login = data['login']
-        #     brand_name = data['brand_name']
-        #     model_title = data['model_title']
-        #     desc = data['desc']
-        #     img_path = data['model_image_path']
-        #
-        # photo = open(img_path, 'rb')
-        # bot.send_photo(message.chat.id, photo, caption=f'1. Брэнд: {brand_name}\n'
-        #                                                f'2. Модель: {model_title}\n'
-        #                                                f'3. Описание: {desc}')
-        #
-        # bot.send_message(message.chat.id, 'Проверьте данные заявки! Нажмите "ОК", если все верно или '
-        #                                   '"Отмена", если в заявке есть ошибка')
-        # bot.set_state(message.from_user.id, CRMStates.confirm_order, message.chat.id)
-
 
 @bot.message_handler(state=CRMStates.model_name)
 def get_model_name(message: Message):
     bot.set_state(message.from_user.id, CRMStates.service_sticker_photo, message.chat.id)
-    bot.send_message(message.chat.id, text=service_sticker_photo)
+    bot.send_message(message.chat.id, text=service_sticker_photo, reply_markup=continue_keyboard())
 
     with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
         data['model_name'] = message.text
@@ -152,13 +137,14 @@ def get_model_name(message: Message):
 @bot.message_handler(state=CRMStates.service_sticker_photo, content_types=['photo', 'text'])
 def get_service_sticker_photo(message: Message):
     if message.content_type == 'photo':
-        path = f'../CRM_tg_bot/images/{message.chat.id}/{datetime.datetime.now().strftime("%Y%m%d")}/service_sticker_photo/'
+        path = f'{WORKDIR}/web_app/static/images/{message.chat.id}/{datetime.datetime.now().strftime("%Y%m%d")}/service_sticker_photo/'
         Path(path).mkdir(parents=True, exist_ok=True)
         image_info = bot.get_file(message.photo[-1].file_id)
         downloaded_image = bot.download_file(image_info.file_path)
         src = path + image_info.file_path.split('/')[1]
+        logger.debug(src)
         with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
-            data['service_sticker_image_path'] = src
+            data['service_sticker_image_path'] = src.split('web_app')[1]
 
         with open(src, 'wb') as new_image:
             new_image.write(downloaded_image)
@@ -186,33 +172,37 @@ def choice_contact_num(message: Message):
 def get_a_comment(message: Message):
     bot.send_message(message.chat.id, text=confirm_text, reply_markup=telebot.types.ReplyKeyboardRemove())
     with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
-        data['comment'] = message.text
+        data['comment'] = message.text if message.text.lower() != 'пропустить' else None
 
     with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
-        create_order(data, message.from_user.id)
+        order_id = create_order(data, message.from_user.id)
 
-    sub_res = get_message_from_order_db(message.from_user.id)
+    sub_res = get_message_from_order_db(order_id)
     breaking_image_path, service_image_path, msg = sub_res[0], sub_res[1], sub_res[2]
-
+    logger.debug(breaking_image_path)
+    logger.debug(service_image_path)
     if breaking_image_path is not None and service_image_path is not None:
-        breaking_photo = open(breaking_image_path, 'rb')
-        service_sticker_photo = open(service_image_path, 'rb')
+        breaking_photo = open(WEB_APP_PATH + breaking_image_path, 'rb')
+        service_sticker_photo = open(WEB_APP_PATH + service_image_path, 'rb')
 
         media = [InputMediaPhoto(breaking_photo, caption=msg), InputMediaPhoto(service_sticker_photo)]
         bot.send_media_group(message.chat.id, media)
 
-    elif breaking_image_path is None and service_image_path:
-        service_sticker_photo = open(service_image_path, 'rb')
+    elif breaking_image_path is None and service_image_path is not None:
+        service_sticker_photo = open(WEB_APP_PATH + service_image_path, 'rb')
         bot.send_photo(message.chat.id, photo=service_sticker_photo, caption=msg)
 
-    elif breaking_image_path and service_image_path is None:
-        breaking_image_photo = open(breaking_image_path, 'rb')
+    elif breaking_image_path is not None and service_image_path is None:
+        breaking_image_photo = open(WEB_APP_PATH + breaking_image_path, 'rb')
         bot.send_photo(message.chat.id, photo=breaking_image_photo, caption=msg)
     else:
         bot.send_message(message.chat.id, text=msg)
 
+    bot.set_state(message.from_user.id, CRMStates.lookup, message.chat.id)
+    bot.send_message(message.chat.id, text=return_to_menu, reply_markup=lookup_keyboard())
+
 
 @bot.message_handler(state="*")
 def undefined_message(message: Message):
-    cur_state = bot.get_state(message.from_user.id, message.chat.id)
-    print(cur_state)
+    bot.send_message(message.chat.id, 'Мне не удается понять, что ты отправил.'
+                                      ' Пожалуйста, отправь то, что просят в инстуркции')

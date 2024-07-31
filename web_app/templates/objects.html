@@ -2,19 +2,32 @@
 {% block content %}
 <div class="container">
     <h1>Добавить точку</h1>
-    <form action="{{ url_for('add_object') }}" method="post" class="compact-form">
-        <label for="login">Логин:</label>
-        <input type="text" id="login" name="login" required><br>
-        <label for="address">Адрес:</label>
-        <input type="text" id="address" name="address" required><br>
-        <label for="entity_id">Наименование компании:</label>
-        <select id="entity_id" name="entity_id" required>
-            {% for entity in entities %}
-            <option value="{{ entity.id }}">{{ entity.name }}</option>
-            {% endfor %}
-        </select><br>
-        <button type="submit">Добавить</button>
-    </form>
+    <button id="addPointBtn" class="btn">Добавить точку</button>
+
+    <!-- Modal Structure -->
+    <div id="addPointModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Добавить точку</h2>
+            <form id="addPointForm" class="compact-form">
+                <label for="login">Логин:</label>
+                <input type="text" id="login" name="login" required><br>
+
+                <label for="address">Адрес:</label>
+                <input type="text" id="address" name="address" required><br>
+
+                <label for="phone">Рабочий телефон:</label>
+                <input type="text" id="phone" name="phone" required><br>
+
+                <label for="entity_id">Наименование компании:</label>
+                <select id="entity_id" name="entity_id" required>
+                    <!-- Options will be populated by JavaScript -->
+                </select><br>
+
+                <button type="button" id="submitPointBtn">Добавить</button>
+            </form>
+        </div>
+    </div>
 
     <h2>Список точек</h2>
     <table id="objects_table" border="1">
@@ -22,6 +35,7 @@
         <tr>
             <th>ID</th>
             <th>Логин</th>
+            <th>Рабочий телефон</th>
             <th>Адрес</th>
             <th>Компания</th>
             <th>Действия</th>
@@ -32,6 +46,7 @@
         <tr>
             <td>{{ object.id }}</td>
             <td>{{ object.login }}</td>
+            <td>{{ object.phone }}</td>
             <td>{{ object.address }}</td>
             <td>{{ object.entity_id.name }}</td>
             <td>
@@ -44,9 +59,60 @@
         </tbody>
     </table>
 </div>
+
 <script>
     $(document).ready(function() {
         $('#objects_table').DataTable();
+
+        var modal = document.getElementById('addPointModal');
+        var btn = document.getElementById('addPointBtn');
+        var span = document.getElementsByClassName('close')[0];
+
+        btn.onclick = function() {
+            modal.style.display = 'block';
+        }
+
+        span.onclick = function() {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        $('#submitPointBtn').click(function() {
+            var formData = $('#addPointForm').serialize();
+            $.ajax({
+                type: 'POST',
+                url: '{{ url_for("add_object") }}',
+                data: formData,
+                success: function(response) {
+                    alert('Точка успешно добавлена');
+                    modal.style.display = 'none';
+                    location.reload();
+                },
+                error: function(response) {
+                    alert('Ошибка при добавлении точки');
+                }
+            });
+        });
+
+        fetchEntities();
     });
+
+    function fetchEntities() {
+        $.get('{{ url_for("get_entities") }}', function(data) {
+            populateSelect($('#entity_id'), data);
+        });
+    }
+
+    function populateSelect(selectElement, data) {
+        selectElement.empty();
+        data.forEach(function(item) {
+            selectElement.append(new Option(item.name, item.id));
+        });
+    }
 </script>
 {% endblock %}
