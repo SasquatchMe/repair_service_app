@@ -20,17 +20,17 @@
     <h2>Список Компаний</h2>
     <table id="entities_table" border="1">
         <thead>
-            <tr>
-                <th>ID</th>
-                <th>Наименование компании</th>
-            </tr>
+        <tr>
+            <th>ID</th>
+            <th>Наименование компании</th>
+        </tr>
         </thead>
         <tbody>
         {% for entity in entities %}
-            <tr>
-                <td>{{ entity.id }}</td>
-                <td>{{ entity.name }}</td>
-            </tr>
+        <tr>
+            <td>{{ entity.id }}</td>
+            <td>{{ entity.name }}</td>
+        </tr>
         {% endfor %}
         </tbody>
     </table>

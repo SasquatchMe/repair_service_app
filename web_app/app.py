@@ -1,10 +1,15 @@
-from flask import Flask, request, render_template, redirect, url_for, flash, jsonify, session
+import datetime
 from functools import wraps
+
+from flask import Flask, request, render_template, redirect, url_for, flash, jsonify, session
 from loguru import logger
-from db.models.tables import db, User, Entity, Order, Object, OrderType, BreakingType
+
+from db.models.tables import Entity, Order, Object, OrderType, BreakingType, Status
+from tg_bot.utils.send_message_update import send_message_about_update_status, send_message_about_est_time, \
+    send_message_about_decline
 
 app = Flask(__name__)
-app.secret_key = '2a2a2e0d4287aa6c2510dd58748938b7cc7f2e519c5bd760'  # Секретный ключ для сессий
+app.secret_key = '2a2a2e0d4287aa6c2510dd58748938b7cc7f2e519c5bd761'  # Секретный ключ для сессий
 
 # Пример данных пользователей для демонстрации (позже можно заменить на базу данных)
 users = {'praktika_service': 'PraktikA123'}
@@ -159,6 +164,59 @@ def get_entities():
     return jsonify([{'id': entity.id, 'name': entity.name} for entity in entities])
 
 
+@app.route('/api/orders/<int:order_id>/status', methods=['PATCH'])
+@login_required
+def update_status(order_id):
+    data = request.get_json()
+    status_id = data.get('status_id')
+    date = data.get('planned_date_time', None)
+    if date:
+        date = datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M')
+    comment = data.get('comment', None)
+    if not status_id:
+        return jsonify({'error': 'Invalid data'}), 400
+
+
+
+    # Получите заказ из базы данных
+    order: Order = Order.get(Order.id == order_id)
+    current_status_id = order.status_id.id
+
+    # Проверьте, существует ли новый статус
+    new_status = Status.get_or_none(Status.id == status_id)
+    if not new_status:
+        return jsonify({'error': 'Invalid status'}), 400
+
+    # Обновите статус заказа
+    if current_status_id != 4 and current_status_id != 5:
+        order.status_id = new_status
+    if date:
+        order.est_date_complete = date.strftime(
+            "%d-%m-%Y %H:%M")  # Установите планируемую дату, если она есть
+    if comment:
+        order.decline_desc = comment
+    order.save()
+
+    tg_id = order.user_id.tg_id
+    if current_status_id != 4 and current_status_id != 5:
+        if new_status.id in (2, 4):
+            send_message_about_update_status(tg_id, order.id)
+        elif new_status.id == 3:
+            send_message_about_est_time(tg_id, order.id)
+        elif new_status.id == 5:
+            send_message_about_decline(tg_id, order.id)
+
+        return jsonify({'newStatus': new_status.status})
+    return jsonify({'newStatus': current_status_id})
+
+
+@app.route('/get_statuses')
+@login_required
+def get_statuses():
+    statuses = Status.select()
+    return jsonify([{'id': st.id, 'status': st.status} for st in statuses])
+
+
 if __name__ == '__main__':
     logger.debug('Start web_app')
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)

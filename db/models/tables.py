@@ -1,7 +1,8 @@
 import datetime
 
-from peewee import Model, CharField, IntegerField, PrimaryKeyField, DateTimeField, SqliteDatabase, ForeignKeyField, \
-    AutoField
+from peewee import Model, CharField, DateTimeField, SqliteDatabase, ForeignKeyField, \
+    AutoField, BooleanField
+
 from config import DATABASE_PATH, DEFAULT_STATUSES, DEFAULT_ORDER_TYPES, DEFAULT_BREAKING_TYPES, DEFAULT_ENTITIES
 
 db = SqliteDatabase(DATABASE_PATH)
@@ -61,6 +62,11 @@ class Order(BaseModel):
     desc = CharField(null=True)
     phone = CharField()
     comment = CharField(null=True)
+    decline_desc = CharField(null=True)
+    worktime = CharField(null=True)
+    est_date_complete = DateTimeField(null=True)
+    date_complete = DateTimeField(null=True)
+    confirm_from_client = BooleanField(default=False)
 
 
 def create_models():
@@ -80,3 +86,9 @@ def create_models():
     if Entity.get_or_none() is None:
         for entity in DEFAULT_ENTITIES:
             Entity.create(name=entity)
+
+    if Object.get_or_none() is None:
+        Object.create(address='Тестовая, 123', login="admin", entity_id=1, phone="999000999")
+
+    if User.get_or_none() is None:
+        User.create(phone="123123123", tg_id="298532779", object_id='1')

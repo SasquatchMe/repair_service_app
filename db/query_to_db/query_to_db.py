@@ -35,6 +35,13 @@ def get_order_by_order_id(order_id):
     order = Order.get(Order.id == order_id)
     return order
 
+
 def get_object_id_by_tg_id(tg_id):
     user = User.get(User.tg_id == tg_id)
     return user.object_id
+
+
+def get_object_phone_by_tg_id(tg_id):
+    user = User.get(User.tg_id == tg_id)
+    object = Object.get(Object.id == user.object_id)
+    return object.phone

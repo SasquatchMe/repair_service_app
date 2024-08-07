@@ -13,6 +13,7 @@ def create_order(data: dict, tg_id):
     service_sticker_image_path = data['service_sticker_image_path']
     phone = data['phone']
     comment = data['comment']
+    worktime = data['worktime']
 
     order = Order.create(
         user_id=user_id,
@@ -25,6 +26,7 @@ def create_order(data: dict, tg_id):
         phone=phone,
         comment=comment,
         object_id=object_id,
+        worktime=worktime
     )
 
     return order.id

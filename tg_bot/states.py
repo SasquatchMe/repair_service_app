@@ -1,10 +1,12 @@
 from telebot.handler_backends import State, StatesGroup
-from telebot import custom_filters
+
+
+class LoginStates(StatesGroup):
+    login = State()
+    get_phone = State()
 
 
 class CRMStates(StatesGroup):
-    login = State()
-    get_phone = State()
     lookup = State()
     order_type = State()
     breaking_type = State()
@@ -13,5 +15,6 @@ class CRMStates(StatesGroup):
     model_name = State()
     service_sticker_photo = State()
     contact = State()
+    worktime = State()
     comment = State()
     confirm_order = State()

@@ -10,7 +10,9 @@
         <label for="entity_id">Наименование компании:</label>
         <select id="entity_id" name="entity_id" required>
             {% for entity in entities %}
-            <option value="{{ entity.id }}" {% if entity.id == object.entity_id.id %}selected{% endif %}>{{ entity.name }}</option>
+            <option value="{{ entity.id }}" {% if entity.id== object.entity_id.id %}selected{% endif %}>{{ entity.name
+                }}
+            </option>
             {% endfor %}
         </select><br>
         <button type="submit">Сохранить</button>

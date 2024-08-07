@@ -1,10 +1,9 @@
 from telebot import custom_filters
-from loguru import logger
 from telebot.types import BotCommand
 
+from config import DEAFAULT_COMMANDS
 from db.models.tables import create_models
 from tg_bot.message_handlers import *
-from config import DEAFAULT_COMMANDS
 
 if __name__ == '__main__':
     create_models()

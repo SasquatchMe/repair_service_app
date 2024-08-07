@@ -148,3 +148,11 @@ li a:hover {
     text-decoration: none;
     cursor: pointer;
 }
+
+th.wrap-text {
+        white-space: normal; /* Разрешает перенос строк */
+        word-wrap: break-word; /* Переносит длинные слова */
+        width: 100px; /* Задайте ширину по вашему усмотрению */
+        overflow-wrap: break-word; /* Обеспечивает перенос длинных слов */
+        text-align: left; /* Выравнивание текста по левому краю (по желанию) */
+    }
