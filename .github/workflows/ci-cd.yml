@@ -22,14 +22,11 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Set image tag
-        run: echo "IMAGE_TAG=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
-
       - name: Build and push bot image
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./Dockerfile-bot
+          file: /Dockerfile-bot
           push: true
           tags: sasquatchme/crm_service:crm_bot
 
@@ -37,15 +34,9 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./Dockerfile-flask
+          file: /Dockerfile-flask
           push: true
           tags: sasquatchme/crm_service:crm_web
 
-      - name: Setup SSH
-          uses: webfactory/ssh-agent@v0.10.1
-          with:
-            ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
       - name: Deploy to server
-        run: "ssh root@147.45.103.30 "docker-compose -f /crm_app/docker-compose.yml pull && docker-compose -f /crm_app/docker-compose.yml up -d"
-
+        run: ssh -i ${{ secrets.SSH_PRIVATE_KEY }} root@147.45.103.30 "docker pull sasquatchme/crm_service:crm_bot && docker pull sasquatchme/crm_service:crm_web && docker-compose -f /crm_app/docker_compose.yml up"
