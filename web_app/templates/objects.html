@@ -43,16 +43,22 @@
         </thead>
         <tbody>
         {% for object in objects %}
-        <tr>
+        <tr data-id="{{ object.id }}">
             <td>{{ object.id }}</td>
             <td>{{ object.login }}</td>
             <td>{{ object.phone }}</td>
             <td>{{ object.address }}</td>
             <td>{{ object.entity_id.name }}</td>
             <td>
-                <form action="{{ url_for('update_object', login=object.login) }}" method="get" style="display:inline;">
-                    <button type="submit">Изменить</button>
-                </form>
+                <div class="action-buttons">
+                    <form action="{{ url_for('update_object', login=object.login) }}" method="get" style="display:inline;">
+                        <button class="changeObjectBtn" type="submit">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                    <button class="deleteObjectBtn">
+                        <i class="fa fa-trash"></i> <!-- Иконка мусорной корзины -->
+                    </button>
+                </div>
             </td>
         </tr>
         {% endfor %}
@@ -100,6 +106,36 @@
         });
 
         fetchEntities();
+
+        // Обработчик клика по кнопке редактирования
+        $(document).on('click', '.editObjectBtn', function() {
+            var row = $(this).closest('tr');
+            var objectId = row.data('id');
+            // Перенаправление на страницу редактирования объекта
+            window.location.href = '{{ url_for("update_object", login="") }}' + objectId;
+        });
+
+        // Обработчик клика по кнопке удаления
+        $(document).on('click', '.deleteObjectBtn', function() {
+            var row = $(this).closest('tr');
+            var objectId = row.data('id');
+
+            if (confirm('Вы уверены, что хотите удалить эту точку?')) {
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ url_for("delete_object") }}', // Создайте этот маршрут в вашем приложении
+                    data: { id: objectId },
+                    success: function(response) {
+                        alert('Точка успешно удалена');
+                        row.remove();
+                        location.reload();
+                    },
+                    error: function(response) {
+                        alert('Ошибка при удалении точки');
+                    }
+                });
+            }
+        });
     });
 
     function fetchEntities() {

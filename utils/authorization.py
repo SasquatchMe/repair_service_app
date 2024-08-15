@@ -9,7 +9,7 @@ def tg_user_exist(tg_id):
 
 
 def check_object_exist(login: str):
-    check = Object.select().where(Object.login == login)
+    check = Object.select().where(Object.login == login.lower())
 
     return True if check else False
 

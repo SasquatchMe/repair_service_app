@@ -1,3 +1,4 @@
+/* Основные стили для тела страницы */
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
@@ -5,37 +6,47 @@ body {
     padding: 0;
 }
 
+/* Контейнер для основного контента */
 .container {
     width: 80%;
     margin: 0 auto;
     padding: 20px;
     background-color: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px; /* Закругляем углы контейнера */
 }
 
+/* Заголовки */
 h1, h2 {
     color: #333;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
     margin-bottom: 20px;
 }
 
-table, th, td {
-    border: 1px solid #ddd;
+/* Стили таблицы */
+/* Стили для таблицы */
+table {
+    width: 100%; /* Таблица занимает всю ширину контейнера */
+    border-collapse: collapse; /* Убираем расстояние между границами ячеек */
 }
 
 th, td {
-    padding: 12px;
-    text-align: left;
+    width: auto;
+    padding: 8px; /* Устанавливаем отступы внутри ячеек */
+    white-space: nowrap; /* Запрещаем перенос текста на несколько строк */
+    text-align: left; /* Выравнивание текста по левому краю */ /* Минимальная ширина ячеек для текста и кнопок */
 }
 
+/* Стили для заголовков таблицы */
 th {
-    background-color: #f2f2f2;
+    width: auto;
+    height:auto;
+    background-color: #f2f2f2; /* Фон заголовка */
+    font-weight: bold; /* Жирное начертание текста */
+    text-align: center; /* Выравнивание текста в заголовке по центру */
+    padding: none;
 }
 
+/* Формы */
 form {
     display: flex;
     flex-direction: column;
@@ -44,38 +55,101 @@ form {
 label {
     margin-bottom: 5px;
     font-size: 14px;
+    color: #333;
 }
 
 input, select, button {
     margin-bottom: 10px;
-    padding: 6px;
+    padding: 8px; /* Увеличиваем отступы внутри полей ввода */
     font-size: 14px;
     width: 100%;
-    max-width: 300px;
+    max-width: 400px; /* Увеличиваем максимальную ширину */
+    border: 1px solid #ddd; /* Лёгкая граница вокруг полей ввода */
+    border-radius: 4px; /* Закругляем углы полей ввода */
 }
 
+/* Кнопки */
 button {
     background-color: #4CAF50;
     color: white;
     border: none;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.2s; /* Плавные переходы */
+    border-radius: 4px; /* Закругляем углы кнопки */
 }
 
 button:hover {
     background-color: #45a049;
+    transform: scale(1.05); /* Немного увеличиваем кнопку при наведении */
 }
 
-.compact-form {
-    max-width: 350px;
-    margin: 0 auto;
-    padding: 10px;
-    background-color: #fafafa;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+/* Основные стили для кнопок с иконками */
+.action-buttons {
+    display: flex; /* Используем Flexbox для расположения кнопок в строку */
+    justify-content: center;
+    align-items: center;/* Выравнивание кнопок по центру вертикально */
 }
 
+/* Основные стили для кнопок с иконками */
+.small-btn, .deleteEntityBtn, .deleteObjectBtn, .changeObjectBtn {
+    padding: 5px; /* Уменьшаем внутренние отступы */
+    cursor: pointer; /* Меняем курсор на указатель */
+    font-size: 14px; /* Устанавливаем размер текста (и иконки) */
+    width: 40px; /* Фиксированная ширина кнопки */
+    height: 30px; /* Фиксированная высота кнопки */
+    align-items: center;
+    justify-content: center;
+}
+
+/* Размер иконок внутри кнопок */
+.small-btn i, .deleteEntityBtn i, .deleteObjectBtn i, .changeObjectBtn i {
+    font-size: 16px; /* Устанавливаем размер иконки */
+}
+
+/* Псевдоклассы для стилизации кнопок при наведении */
+.small-btn:hover, .deleteEntityBtn:hover, .deleteObjectBtn:hover, .changeObjectBtn:hover {
+    color: red; /* Изменяем цвет иконки при наведении */
+}
+
+/* Стилизация модальных окон */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000; /* Устанавливаем высокий z-index для модального окна */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5); /* Полупрозрачный фон */
+    padding-top: 60px;
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #ddd; /* Лёгкая граница */
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px; /* Закругляем углы модального окна */
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Стилизация боковой панели */
 .sidebar {
     position: fixed;
     top: 0;
@@ -84,8 +158,10 @@ button:hover {
     height: 100%;
     background-color: #f1f1f1;
     padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
+/* Стилизация элементов списка */
 ul {
     list-style-type: none;
     margin: 0;
@@ -104,55 +180,17 @@ li a {
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
+    transition: background-color 0.3s; /* Плавный переход */
 }
 
 li a:hover {
     background-color: #111;
 }
 
-/* Modal Styles */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgb(0, 0, 0);
-    background-color: rgba(0, 0, 0, 0.4);
-    padding-top: 60px;
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 5% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 500px;
-    border-radius: 10px;
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
+/* Стилизация для ячеек таблицы с переносом текста */
 th.wrap-text {
-        white-space: normal; /* Разрешает перенос строк */
-        word-wrap: break-word; /* Переносит длинные слова */
-        width: 100px; /* Задайте ширину по вашему усмотрению */
-        overflow-wrap: break-word; /* Обеспечивает перенос длинных слов */
-        text-align: left; /* Выравнивание текста по левому краю (по желанию) */
-    }
+    white-space: normal; /* Разрешает перенос строк */
+    word-wrap: break-word; /* Переносит длинные слова */
+    width: 150px; /* Задайте ширину по вашему усмотрению */
+    overflow-wrap: break-word; /* Обеспечивает перенос длинных слов */
+}

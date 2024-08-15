@@ -248,13 +248,13 @@ def get_a_comment(message: Message):
 def handle_query(call: CallbackQuery):
     order_id = ''.join(s for s in call.data if s.isdigit())
     if call.data.startswith('cb_confirm_yes'):
-        bot.send_message(call.message.chat.id, text='Мастер уже выезжает к Вам!')
+        bot.send_message(call.message.chat.id, text='🕜Ожидайте приезда мастера')
         bot.edit_message_reply_markup(call.message.chat.id, message_id=call.message.message_id, reply_markup=None)
         order: Order = Order.get(Order.id == order_id)
         order.confirm_from_client = True
         order.save()
     elif 'cb_confirm_no' in call.data:
-        bot.send_message(call.message.chat.id, text='Заказ отменен')
+        bot.send_message(call.message.chat.id, text='❌Заявка отменена')
         bot.edit_message_reply_markup(call.message.chat.id, message_id=call.message.message_id, reply_markup=None)
         bot.delete_state(call.message.from_user.id)
         order = Order.get(Order.id == order_id)

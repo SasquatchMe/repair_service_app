@@ -4,15 +4,16 @@ from functools import wraps
 from flask import Flask, request, render_template, redirect, url_for, flash, jsonify, session
 from loguru import logger
 
+from config import DATABASE_PATH, SECRET_KEY
 from db.models.tables import Entity, Order, Object, OrderType, BreakingType, Status
 from tg_bot.utils.send_message_update import send_message_about_update_status, send_message_about_est_time, \
     send_message_about_decline
 
 app = Flask(__name__)
-app.secret_key = '2a2a2e0d4287aa6c2510dd58748938b7cc7f2e519c5bd761'  # Секретный ключ для сессий
+app.secret_key = SECRET_KEY  # Секретный ключ для сессий
 
 # Пример данных пользователей для демонстрации (позже можно заменить на базу данных)
-users = {'praktika_service': 'PraktikA123'}
+users = {'admin': 'admin'}
 
 
 # Декоратор для проверки авторизации
@@ -64,7 +65,7 @@ def objects_list():
 def add_object():
     data = request.form
     new_object = Object.create(
-        login=data['login'],
+        login=data['login'].lower(),
         address=data['address'],
         phone=data['phone'],
         entity_id=data['entity_id']
@@ -176,8 +177,6 @@ def update_status(order_id):
     if not status_id:
         return jsonify({'error': 'Invalid data'}), 400
 
-
-
     # Получите заказ из базы данных
     order: Order = Order.get(Order.id == order_id)
     current_status_id = order.status_id.id
@@ -198,7 +197,7 @@ def update_status(order_id):
     order.save()
 
     tg_id = order.user_id.tg_id
-    if current_status_id != 4 and current_status_id != 5:
+    if current_status_id != 4 and current_status_id != 5 and current_status_id > new_status:
         if new_status.id in (2, 4):
             send_message_about_update_status(tg_id, order.id)
         elif new_status.id == 3:
@@ -217,6 +216,26 @@ def get_statuses():
     return jsonify([{'id': st.id, 'status': st.status} for st in statuses])
 
 
+@app.route('/entities', methods=['POST'])
+@login_required
+def delete_entity():
+    entity_id = request.form.get('id')
+    entity: Entity = Entity.get(Entity.id == entity_id)
+    entity.delete_instance()
+    return jsonify({'id': entity_id, 'status': 200})
+
+
+@app.route('/objects', methods=['POST'])
+@login_required
+def delete_object():
+    object_id = request.form.get('id')
+    object: Object = Object.get(Object.id == object_id)
+    object.delete_instance()
+    return jsonify({'id': object_id, 'status': 200})
+
+
 if __name__ == '__main__':
     logger.debug('Start web_app')
+
+    print(DATABASE_PATH)
     app.run(debug=True, host='0.0.0.0', port=5000)

@@ -23,14 +23,23 @@
         <tr>
             <th>ID</th>
             <th>Наименование компании</th>
+            <th>Действия</th> <!-- Добавлено новое поле для действий -->
         </tr>
         </thead>
         <tbody>
         {% for entity in entities %}
-        <tr>
+        <tr data-id="{{ entity.id }}">
             <td>{{ entity.id }}</td>
             <td>{{ entity.name }}</td>
+            <td>
+                <div class="action-buttons">
+                    <button class="deleteEntityBtn">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </div>
+            </td>
         </tr>
+
         {% endfor %}
         </tbody>
     </table>
@@ -73,6 +82,27 @@
                     alert('Ошибка при добавлении компании');
                 }
             });
+        });
+
+        $('.deleteEntityBtn').click(function() {
+            var row = $(this).closest('tr');
+            var entityId = row.data('id');
+
+            if (confirm('Вы уверены, что хотите удалить эту компанию?')) {
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ url_for("delete_entity") }}',  // Создайте этот маршрут в вашем приложении
+                    data: { id: entityId },
+                    success: function(response) {
+                        alert('Компания успешно удалена');
+                        row.remove();
+                        location.reload();
+                    },
+                    error: function(response) {
+                        alert('Ошибка при удалении компании');
+                    }
+                });
+            }
         });
     });
 </script>

@@ -6,6 +6,7 @@ from peewee import Model, CharField, DateTimeField, SqliteDatabase, ForeignKeyFi
 from config import DATABASE_PATH, DEFAULT_STATUSES, DEFAULT_ORDER_TYPES, DEFAULT_BREAKING_TYPES, DEFAULT_ENTITIES
 
 db = SqliteDatabase(DATABASE_PATH)
+db.pragma('foreign_keys', 1, permanent=True)
 
 
 class BaseModel(Model):
@@ -27,7 +28,7 @@ class Object(BaseModel):
     id = AutoField(primary_key=True)
     address = CharField()
     login = CharField()
-    entity_id = ForeignKeyField(Entity)
+    entity_id = ForeignKeyField(Entity, on_delete='CASCADE')
     phone = CharField()
 
 
@@ -53,7 +54,7 @@ class Order(BaseModel):
     order_type_id = ForeignKeyField(OrderType)
     breaking_type_id = ForeignKeyField(BreakingType)
     user_id = ForeignKeyField(User, null=True)
-    object_id = ForeignKeyField(Object)
+    object_id = ForeignKeyField(Object, on_delete='CASCADE')
     status_id = ForeignKeyField(Status, default=1)
     date_create = DateTimeField(default=datetime.datetime.now().strftime("%d-%m-%Y %H:%M"))
     breaking_image_path = CharField(null=True)
@@ -86,9 +87,3 @@ def create_models():
     if Entity.get_or_none() is None:
         for entity in DEFAULT_ENTITIES:
             Entity.create(name=entity)
-
-    if Object.get_or_none() is None:
-        Object.create(address='Тестовая, 123', login="admin", entity_id=1, phone="999000999")
-
-    if User.get_or_none() is None:
-        User.create(phone="123123123", tg_id="298532779", object_id='1')

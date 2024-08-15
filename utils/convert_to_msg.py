@@ -9,7 +9,7 @@ def get_message_from_order_db(order_id):
     msg = (f"*Номер заявки:* {order.id}\n"
            f"*Дата создания:* {order.date_create}\n\n"
            f"*Тип заявки:* {order.order_type_id.order_type}\n"
-           f"*Тип поломки:* {order.breaking_type_id.breaking_type}\n"
+           f"*Тип неисправности:* {order.breaking_type_id.breaking_type}\n"
            f"*Контактный номер:* {order.phone}\n"
            f"*Адрес:* {order.user_id.object_id.address}\n\n"
            f"*Статус заявки: {order.status_id.status}*")
@@ -31,7 +31,7 @@ def get_message_from_order_db(order_id):
 
 def get_update_message_from_order_db(order_id):
     order: Order = get_order_by_order_id(order_id)
-    msg = (f"❗Уведомление о изменении статуса заявки❗\n\n"
+    msg = (f"❗*Уведомление о изменении статуса заявки*❗\n\n"
            f"*Номер заявки:* {order.id}\n"
            f"*Дата создания:* {order.date_create}\n"
            f"*Статус заявки: {order.status_id.status}*")
@@ -40,19 +40,21 @@ def get_update_message_from_order_db(order_id):
 
 def get_update_message_from_order_db_with_est_time(order_id):
     order: Order = get_order_by_order_id(order_id)
-    msg = (f"❗Уведомление о изменении статуса заявки❗\n\n"
+    msg = (f"❗*Уведомление о изменении статуса заявки*❗\n\n"
            f"*Номер заявки:* {order.id}\n"
            f"*Дата создания:* {order.date_create}\n"
            f"*Статус заявки: {order.status_id.status}*\n\n"
-           f"*Ориентировочное время прибытия мастера: {order.est_date_complete}*")
+           f"*Ориентировочное время прибытия мастера: {order.est_date_complete}*\n"
+           f"_Нажмите_ '✅Принимаю', _если время прибытия мастера подходит_\n"
+           f"_Нажмите_ '❌Отказываюсь', _чтобы отменить заявку_")
     return msg
 
 
 def get_decline_message(order_id):
     order: Order = get_order_by_order_id(order_id)
-    msg = (f"❗Уведомление об отмене заявки❗\n\n"
+    msg = (f"❗*Уведомление об отмене заявки*❗\n\n"
            f"*Номер заявки:* {order.id}\n"
            f"*Дата создания:* {order.date_create}\n"
            f"*Статус заявки: {order.status_id.status}*\n\n"
-           f"*Комментарий сервиса: {order.decline_desc}*")
+           f"*Причина отказа: {order.decline_desc}*")
     return msg
