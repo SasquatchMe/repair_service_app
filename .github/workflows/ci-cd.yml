@@ -43,5 +43,5 @@ jobs:
 
     - name: Deploy to server
       run: |
-        ssh root@147.45.103.30 "docker-compose -f /crm_app/docker-compose.yml pull && docker-compose -f /crm_app/docker-compose.yml up -d"
+        ssh -i ${{ secrets.SSH_PRIVATE_KEY }} root@147.45.103.30 "docker-compose -f /crm_app/docker-compose.yml pull && docker-compose -f /crm_app/docker-compose.yml up -d"
 
