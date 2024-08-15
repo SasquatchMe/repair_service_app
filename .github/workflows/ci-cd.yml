@@ -26,7 +26,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: /Dockerfile-bot
+          file: ./Dockerfile-bot
           push: true
           tags: sasquatchme/crm_service:crm_bot
 
@@ -34,7 +34,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: /Dockerfile-flask
+          file: ./Dockerfile-flask
           push: true
           tags: sasquatchme/crm_service:crm_web
 
