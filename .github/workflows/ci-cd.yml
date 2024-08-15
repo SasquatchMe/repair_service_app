@@ -22,15 +22,24 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build and push Docker image
+    - name: Build and push bot image
       uses: docker/build-push-action@v2
       with:
         context: .
+        file: ./Dockerfile-bot
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/crm_service:latest
+        tags: sasquatchme/crm_service:crm_bot
+
+    - name: Build and push web image
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: ./Dockerfile-flask
+        push: true
+        tags: sasquatchme/crm_service:crm_web
 
     - name: Deploy to server
       run: |
-        ssh root@147.45.103.30 "docker pull ${{ secrets.DOCKER_USERNAME }}/crm_service:latest && docker-compose up -d"
+        ssh root@147.45.103.30 "docker-compose -f /crm_app/docker-compose.yml pull && docker-compose -f /crm_app/docker-compose.yml up -d"
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
