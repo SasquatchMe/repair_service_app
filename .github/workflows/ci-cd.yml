@@ -31,7 +31,7 @@ jobs:
         context: .
         file: ./Dockerfile.bot
         push: true
-        tags: sasquatchme/crm_service:crm_bot:${{ env.IMAGE_TAG }}
+        tags: sasquatchme/crm_service:crm_bot
 
     - name: Build and push web image
       uses: docker/build-push-action@v2
@@ -39,7 +39,7 @@ jobs:
         context: .
         file: ./Dockerfile.web
         push: true
-        tags: sasquatchme/crm_service:crm_web:${{ env.IMAGE_TAG }}
+        tags: sasquatchme/crm_service:crm_web
 
     - name: Deploy to server
       run: |
