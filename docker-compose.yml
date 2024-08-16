@@ -10,10 +10,7 @@ services:
     image: sasquatchme/crm_service:crm_web
     container_name: flask_app
     volumes:
-      - ./database.db:/database.db  # Монтируем папку для хранения базы данных
+      - ./database.db:/database.db
     ports:
       - "5000:5000"
-    environment:
-      - FLASK_ENV=development
 
-    # Монтируем ту же папку для доступа к базе данных

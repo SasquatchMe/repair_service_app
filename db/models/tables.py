@@ -87,3 +87,4 @@ def create_models():
     if Entity.get_or_none() is None:
         for entity in DEFAULT_ENTITIES:
             Entity.create(name=entity)
+
