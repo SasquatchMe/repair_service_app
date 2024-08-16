@@ -40,7 +40,7 @@
   ```bash
   pip install -r requirements.txt
   ```
-5.Запустите приложение:
+5. Запустите приложение:
 
 ```bash
 python app.py
