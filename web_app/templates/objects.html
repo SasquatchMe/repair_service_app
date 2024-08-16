@@ -43,7 +43,8 @@
         <tbody>
         {% for object in objects %}
         <tr data-id="{{ object.id }}">
-            <td><a href="{{ url_for('object_orders', object_id=object.id) }}" title="Заявки с этой точки">{{ object.id }}</a></td>
+            <td><a href="{{ url_for('object_orders', object_id=object.id) }}" title="Заявки с этой точки">{{ object.id
+                }}</a></td>
             <td>{{ object.phone }}</td>
             <td>{{ object.address }}</td>
             <td>{{ object.entity_id.name }}</td>

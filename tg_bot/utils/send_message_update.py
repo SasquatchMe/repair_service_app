@@ -1,6 +1,6 @@
 from tg_bot.bot_instance import bot
-from utils.convert_to_msg import *
 from tg_bot.keyboards.confirm_inline_keyboard import cb_inline_keyboard
+from utils.convert_to_msg import *
 
 
 def send_message_about_update_status(tg_id, order_id):

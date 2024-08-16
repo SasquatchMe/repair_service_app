@@ -7,14 +7,12 @@ if not find_dotenv():
 else:
     load_dotenv()
 
-
 # BASE_PATH = os.path.abspath('/Users/Androidnek/PycharmProjects/CRM_tg_bot')
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 SECRET_KEY = os.getenv('SECRET_KEY')
 WEB_APP_PATH = os.path.abspath('web_app/')
 # DATABASE_PATH = os.path.abspath(BASE_PATH + '/database.db')
 DATABASE_PATH = os.path.abspath('/database.db')
-
 
 DEAFAULT_COMMANDS = (
     ['neworder', 'Создать новую заявку'],

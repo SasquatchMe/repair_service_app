@@ -22,9 +22,10 @@
             <td>{{ order.breaking_type_id.breaking_type }}</td>
             <td>
                 {% if order.confirm_from_client == 1 %}
-                    <img src="{{ url_for('static', filename='icons/ok_true.svg') }}" alt="Confirmed" class="status-icon">
+                <img src="{{ url_for('static', filename='icons/ok_true.svg') }}" alt="Confirmed" class="status-icon">
                 {% else %}
-                    <img src="{{ url_for('static', filename='icons/cross_false.svg') }}" alt="Not Confirmed" class="status-icon">
+                <img src="{{ url_for('static', filename='icons/cross_false.svg') }}" alt="Not Confirmed"
+                     class="status-icon">
                 {% endif %}
             </td>
             <td>{{ order.status_id.status }}</td>
