@@ -58,3 +58,4 @@ def get_decline_message(order_id):
            f"*Статус заявки: {order.status_id.status}*\n\n"
            f"*Причина отказа: {order.decline_desc}*")
     return msg
+
