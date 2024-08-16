@@ -19,10 +19,9 @@
                 <label for="phone">Рабочий телефон:</label>
                 <input type="text" id="phone" name="phone" required><br>
 
-                <label for="entity_id">Наименование компании:</label>
-                <select id="entity_id" name="entity_id" required>
-                    <!-- Options will be populated by JavaScript -->
-                </select><br>
+                <input type="hidden" id="entity_id" name="entity_id" value="{{ entity.id }}"><br>
+
+
 
                 <button type="button" id="submitPointBtn">Добавить</button>
             </form>
@@ -36,25 +35,23 @@
             <th>ID</th>
             <th>Рабочий телефон</th>
             <th>Адрес</th>
-            <th>Компания</th>
             <th>Действия</th>
         </tr>
         </thead>
         <tbody>
         {% for object in objects %}
         <tr data-id="{{ object.id }}">
-            <td><a href="{{ url_for('object_orders', object_id=object.id) }}" title="Заявки с этой точки">{{ object.id }}</a></td>
+            <td><a href="{{ url_for('object_orders', object_id=object.id) }}">{{ object.id }}</a></td>
             <td>{{ object.phone }}</td>
             <td>{{ object.address }}</td>
-            <td>{{ object.entity_id.name }}</td>
             <td>
                 <div class="action-buttons">
                     <form action="{{ url_for('update_object', login=object.login) }}" method="get"
                           style="display:inline;">
-                        <button class="changeObjectBtn" type="submit">
+                        <button class="changeObjectBtn" type="submit" title="Изменить данные">
                             <i class="fas fa-cog"></i>
                         </button>
-                        <button class="deleteObjectBtn">
+                        <button class="deleteObjectBtn" title="Удалить точку">
                             <i class="fa fa-trash"></i> <!-- Иконка мусорной корзины -->
                         </button>
                     </form>

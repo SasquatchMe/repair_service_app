@@ -234,6 +234,21 @@ def delete_object():
     return jsonify({'id': object_id, 'status': 200})
 
 
+@app.route('/objects/<int:object_id>/orders', methods=['GET'])
+@login_required
+def object_orders(object_id):
+    orders = Order.select().where(Order.object_id == object_id)
+    return render_template('object_orders.html', orders=orders)
+
+
+@app.route('/entities/<int:entity_id>/objects', methods=['GET'])
+@login_required
+def entity_objects(entity_id):
+    objects = Object.select().where(Object.entity_id == entity_id)
+    entity = Entity.get(Entity.id == entity_id)
+    return render_template('entity_objects.html', objects=objects, entity=entity)
+
+
 if __name__ == '__main__':
     logger.debug('Start web_app')
 

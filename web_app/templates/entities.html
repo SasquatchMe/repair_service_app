@@ -29,11 +29,11 @@
         <tbody>
         {% for entity in entities %}
         <tr data-id="{{ entity.id }}">
-            <td>{{ entity.id }}</td>
+            <td><a href="{{ url_for('entity_objects', entity_id=entity.id) }}" title="Все точки этой компании">{{ entity.id }}</a></td>
             <td>{{ entity.name }}</td>
             <td>
                 <div class="action-buttons">
-                    <button class="deleteEntityBtn">
+                    <button class="deleteEntityBtn" title="Удалить компанию">
                         <i class="fa fa-trash"></i>
                     </button>
                 </div>
