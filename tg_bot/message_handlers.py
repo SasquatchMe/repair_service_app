@@ -30,12 +30,12 @@ def send_welcome_message(message: Message):
     logger.debug(message.chat.id)
     if not tg_user_exist(tg_id):
         bot.set_state(message.from_user.id, LoginStates.login, message.chat.id)
-        bot.send_message(message.chat.id, 'Добрый день!!\nОтправьте логин Вашего предприятия, выданный менеджером')
+        bot.send_message(message.chat.id, 'Отправьте логин Вашего предприятия, выданный менеджером')
     else:
         bot.set_state(message.from_user.id, CRMStates.lookup, message.chat.id)
         bot.send_message(message.chat.id,
-                         f'Добрый день! Рады снова видеть Вас, *{message.from_user.first_name}*!\nВыберите действие в '
-                         'меню команд для продолжения работы', parse_mode='Markdown')
+                         f'Добрый день! Рады снова видеть Вас, *{message.from_user.first_name}*!\nНажмите кнопку "Меню" (слева от окна ввода сообщения) и выберите действие'
+                         ' для продолжения работы', parse_mode='Markdown')
 
 
 @bot.message_handler(commands=['info'])
@@ -96,8 +96,12 @@ def get_phone(message: Message):
 @bot.message_handler(state=CRMStates.lookup)
 @bot.message_handler(commands=['neworder'])
 def lookup(message: Message):
-    bot.set_state(message.from_user.id, CRMStates.order_type, message.chat.id)
-    bot.send_message(message.chat.id, text=type_order, reply_markup=order_type_keyboard(), parse_mode='Markdown')
+    if tg_user_exist(message.from_user.id):
+        bot.set_state(message.from_user.id, CRMStates.order_type, message.chat.id)
+        bot.send_message(message.chat.id, text=type_order, reply_markup=order_type_keyboard(), parse_mode='Markdown')
+    else:
+        bot.send_message(message.chat.id, 'Вы не зарегистрированы.'
+                                          ' Нажмите /start для того, чтобы пройти регистрацию')
 
 
 @bot.message_handler(state=CRMStates.order_type)
