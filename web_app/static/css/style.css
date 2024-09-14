@@ -39,7 +39,7 @@ th, td {
 /* Стили для заголовков таблицы */
 th {
     width: auto;
-    height:auto;
+    height: auto;
     background-color: #f2f2f2; /* Фон заголовка */
     font-weight: bold; /* Жирное начертание текста */
     text-align: center; /* Выравнивание текста в заголовке по центру */
@@ -87,7 +87,7 @@ button:hover {
 .action-buttons {
     display: flex; /* Используем Flexbox для расположения кнопок в строку */
     justify-content: center;
-    align-items: center;/* Выравнивание кнопок по центру вертикально */
+    align-items: center; /* Выравнивание кнопок по центру вертикально */
 }
 
 /* Основные стили для кнопок с иконками */

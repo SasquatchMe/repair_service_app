@@ -21,22 +21,22 @@
                 <div class="col-md-6">
                     <h5>Фото поломки:</h5>
                     {% if order.breaking_image_path %}
-                    <img src="{{ order.breaking_image_path}}" alt="Фото поломки" width="600" height="400">
+                    <img alt="Фото поломки" src="{{ order.breaking_image_path}}" width="400">
                     {% else %}
-                    <img src="/static/no_photo/No-Image-Placeholder.svg.png" alt="Фото нет" width="300">
+                    <img alt="Фото нет" src="/static/no_photo/No-Image-Placeholder.svg.png" width="300">
                     {% endif %}
                 </div>
                 <div class="col-md-6">
                     <h5>Фото сервисной наклейки:</h5>
                     {% if order.service_sticker_image_path %}
-                    <img src="{{ order.service_sticker_image_path }}" alt="Фото сервисной наклейки" width="400">
+                    <img alt="Фото сервисной наклейки" src="{{ order.service_sticker_image_path }}" width="400">
                     {% else %}
-                    <img src="/static/no_photo/No-Image-Placeholder.svg.png" alt="Фото нет" width="300">
+                    <img alt="Фото нет" src="/static/no_photo/No-Image-Placeholder.svg.png" width="300">
                     {% endif %}
                 </div>
             </div>
 
-            <a href="{{ url_for('orders_list') }}" class="btn btn-primary mt-3">Назад к списку заявок</a>
+            <a class="btn btn-primary mt-3" href="{{ url_for('orders_list') }}">Назад к списку заявок</a>
         </div>
     </div>
 </div>

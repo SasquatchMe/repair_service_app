@@ -2,34 +2,25 @@
 {% block content %}
 <div class="container">
     <h1>Список заявок</h1>
-    <button id="createOrderBtn" class="btn">Создать заявку</button>
-    <table id="orders_table" border="1">
+    <button class="btn" id="createOrderBtn">Создать заявку</button>
+    <table border="1" id="orders_table">
         <thead>
         <tr>
             <th>ID</th>
             <th>Тип заявки</th>
             <th>Тип неполадки</th>
             <th>Адрес</th>
-            <th class="wrap-text">Подтверждено заказчиком</th>
             <th>Текущий статус</th>
             <th>Выбор статуса</th>
         </tr>
         </thead>
         <tbody>
         {% for order in orders %}
-        <tr id="order-{{ order.id }}">
+        <tr data-worktime="{{ order.worktime }}" id="order-{{ order.id }}">
             <td><a href="{{ url_for('order_detail', order_id=order.id) }}">{{ order.id }}</a></td>
             <td>{{ order.order_type_id.order_type }}</td>
             <td>{{ order.breaking_type_id.breaking_type }}</td>
             <td>{{ order.object_id.address }}</td>
-            <td>
-                {% if order.confirm_from_client == 1 %}
-                <img src="{{ url_for('static', filename='icons/ok_true.svg') }}" alt="Confirmed" class="status-icon">
-                {% else %}
-                <img src="{{ url_for('static', filename='icons/cross_false.svg') }}" alt="Not Confirmed"
-                     class="status-icon">
-                {% endif %}
-            </td>
             <td>{{ order.status_id.status }}</td>
             <td>
                 <select class="status-select" data-order-id="{{ order.id }}">
@@ -47,11 +38,11 @@
 </div>
 
 <!-- Existing Create Order Modal -->
-<div id="createOrderModal" class="modal">
+<div class="modal" id="createOrderModal">
     <div class="modal-content">
         <span class="close">&times;</span>
         <h2>Создать заявку</h2>
-        <form id="createOrderForm" class="compact-form">
+        <form class="compact-form" id="createOrderForm">
             <label for="order_type_id">Тип заявки</label>
             <select id="order_type_id" name="order_type_id"></select>
 
@@ -62,48 +53,57 @@
             <select id="object_id" name="object_id"></select>
 
             <label for="model_name">Название модели</label>
-            <input type="text" id="model_name" name="model_name" required>
+            <input id="model_name" name="model_name" required type="text">
 
             <label for="desc">Описание</label>
-            <input type="text" id="desc" name="desc">
+            <input id="desc" name="desc" type="text">
 
             <label for="phone">Телефон</label>
-            <input type="text" id="phone" name="phone" required>
+            <input id="phone" name="phone" required type="text">
 
             <label for="comment">Комментарий</label>
-            <input type="text" id="comment" name="comment">
+            <input id="comment" name="comment" type="text">
 
-            <button type="button" id="submitOrderBtn">Создать</button>
+            <button id="submitOrderBtn" type="button">Создать</button>
         </form>
     </div>
 </div>
 
 <!-- Date and Time Picker Modal -->
-<div id="datePickerModal" class="modal">
+<div class="modal" id="datePickerModal">
     <div class="modal-content">
         <span class="close">&times;</span>
         <h2>Выберите планируемую дату и время выполнения</h2>
-        <input type="datetime-local" id="plannedDateTimeInput">
-        <button type="button" id="saveDateBtn">Сохранить</button>
+        <p id="worktimeInfo"></p> <!-- Элемент для отображения worktime -->
+        <input id="plannedDateTimeInput" type="datetime-local">
+        <button id="saveDateBtn" type="button">Сохранить</button>
     </div>
 </div>
 
 <!-- Comments Modal -->
-<div id="commentsModal" class="modal">
+<div class="modal" id="commentsModal">
     <div class="modal-content">
         <span class="close">&times;</span>
         <h2>Введите комментарий по причине отказа</h2>
-        <textarea id="commentInput" rows="4" cols="50"></textarea>
-        <button type="button" id="saveCommentBtn">Сохранить</button>
+        <textarea cols="50" id="commentInput" rows="4"></textarea>
+        <button id="saveCommentBtn" type="button">Сохранить</button>
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
 <script>
-    $(document).ready(function() {
-        $('#orders_table').DataTable();
+    document.addEventListener("DOMContentLoaded", function () {
+        // DataTables инициализация
+        $('#orders_table').DataTable({
+            language: {
+                "url": "https://cdn.datatables.net/plug-ins/1.10.21/i18n/Russian.json"  // Подключение русского перевода
+            },// Отключить поиск
+            paging: false,     // Отключить пагинацию
+            info: false,       // Отключить информацию о таблице
+            lengthChange: false,
+            responsive: true,
+            order: [],
+
+        });
 
         var createOrderModal = document.getElementById('createOrderModal');
         var datePickerModal = document.getElementById('datePickerModal');
@@ -113,23 +113,23 @@
         var datePickerClose = datePickerModal.getElementsByClassName('close')[0];
         var commentsClose = commentsModal.getElementsByClassName('close')[0];
 
-        createOrderBtn.onclick = function() {
+        createOrderBtn.onclick = function () {
             createOrderModal.style.display = 'block';
         }
 
-        createOrderClose.onclick = function() {
+        createOrderClose.onclick = function () {
             createOrderModal.style.display = 'none';
         }
 
-        datePickerClose.onclick = function() {
+        datePickerClose.onclick = function () {
             datePickerModal.style.display = 'none';
         }
 
-        commentsClose.onclick = function() {
+        commentsClose.onclick = function () {
             commentsModal.style.display = 'none';
         }
 
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             if (event.target == createOrderModal) {
                 createOrderModal.style.display = 'none';
             }
@@ -141,18 +141,18 @@
             }
         }
 
-        $('#submitOrderBtn').click(function() {
+        $('#submitOrderBtn').click(function () {
             var formData = $('#createOrderForm').serialize();
             $.ajax({
                 type: 'POST',
                 url: '{{ url_for("create_order") }}',
                 data: formData,
-                success: function(response) {
+                success: function (response) {
                     alert('Заявка успешно создана');
                     createOrderModal.style.display = 'none';
                     location.reload();
                 },
-                error: function(response) {
+                error: function (response) {
                     alert('Ошибка при создании заявки');
                 }
             });
@@ -161,20 +161,24 @@
         var selectedOrderId = null;
         var selectedStatusId = null;
 
-        $(document).on('change', '.status-select', function() {
+        $(document).on('change', '.status-select', function () {
             selectedOrderId = $(this).data('order-id');
             selectedStatusId = $(this).val();
+            var worktime = $('#order-' + selectedOrderId).data('worktime');  // Получаем worktime из data-атрибута
 
-            if (selectedStatusId == 3) {
+            if (selectedStatusId == 3) {  // Пример статуса, который вызывает выбор даты
+                if (worktime) {
+                    $('#worktimeInfo').text('Желаемое время прибытия: ' + worktime);  // Устанавливаем worktime в элемент
+                }
                 datePickerModal.style.display = 'block';
-            } else if (selectedStatusId == 5) {
+            } else if (selectedStatusId == 5) {  // Пример статуса, который вызывает комментарий
                 commentsModal.style.display = 'block';
             } else {
                 updateStatus(selectedOrderId, selectedStatusId, null, null);
             }
         });
 
-        $('#saveDateBtn').click(function() {
+        $('#saveDateBtn').click(function () {
             var plannedDateTime = $('#plannedDateTimeInput').val();
             if (plannedDateTime) {
                 updateStatus(selectedOrderId, selectedStatusId, plannedDateTime, null);
@@ -184,7 +188,7 @@
             }
         });
 
-        $('#saveCommentBtn').click(function() {
+        $('#saveCommentBtn').click(function () {
             var comment = $('#commentInput').val();
             if (comment) {
                 updateStatus(selectedOrderId, selectedStatusId, null, comment);
@@ -199,12 +203,12 @@
                 type: 'PATCH',
                 url: `/api/orders/${orderId}/status`,
                 contentType: 'application/json',
-                data: JSON.stringify({ status_id: statusId, planned_date_time: plannedDateTime, comment: comment }),
-                success: function(response) {
+                data: JSON.stringify({status_id: statusId, planned_date_time: plannedDateTime, comment: comment}),
+                success: function (response) {
                     alert('Статус успешно обновлен');
                     location.reload();  // Перезагрузка страницы для отображения обновленного статуса
                 },
-                error: function(response) {
+                error: function (response) {
                     alert('Ошибка при обновлении статуса');
                     location.reload();  // Перезагрузка страницы, чтобы вернуть статус в случае сбоя обновления
                 }
@@ -212,36 +216,37 @@
         }
 
         fetchOptions();
-    });
+    })
+    ;
 
     function fetchOptions() {
-        $.get('{{ url_for("get_order_types") }}', function(data) {
+        $.get('{{ url_for("get_order_types") }}', function (data) {
             populateSelect($('#order_type_id'), data);
         });
-        $.get('{{ url_for("get_breaking_types") }}', function(data) {
+        $.get('{{ url_for("get_breaking_types") }}', function (data) {
             populateSelect($('#breaking_type_id'), data);
         });
-        $.get('{{ url_for("get_objects") }}', function(data) {
+        $.get('{{ url_for("get_objects") }}', function (data) {
             populateSelect($('#object_id'), data);
         });
-        $.get('{{ url_for("get_statuses") }}', function(data) {
+        $.get('{{ url_for("get_statuses") }}', function (data) {
             populateStatusOptions(data);
         });
     }
 
     function populateSelect(selectElement, data) {
         selectElement.empty();
-        data.forEach(function(item) {
+        data.forEach(function (item) {
             selectElement.append(new Option(item.name, item.id));
         });
     }
 
     function populateStatusOptions(data) {
-        $('.status-select').each(function() {
+        $('.status-select').each(function () {
             var selectElement = $(this);
             var currentStatus = selectElement.find('option[selected]').val();
             selectElement.empty();
-            data.forEach(function(item) {
+            data.forEach(function (item) {
                 var isSelected = currentStatus == item.id ? 'selected' : '';
                 selectElement.append(new Option(item.status, item.id, false, isSelected));
             });

@@ -12,7 +12,7 @@ BOT_TOKEN = os.getenv('BOT_TOKEN')
 SECRET_KEY = os.getenv('SECRET_KEY')
 WEB_APP_PATH = os.path.abspath('web_app/')
 # DATABASE_PATH = os.path.abspath(BASE_PATH + '/database.db')
-DATABASE_PATH = os.path.abspath('/database.db')
+DATABASE_PATH = os.path.abspath('database.db')
 
 DEAFAULT_COMMANDS = (
     ['neworder', 'Создать новую заявку'],
@@ -45,7 +45,5 @@ DEFAULT_BREAKING_TYPES = [
 ]
 
 DEFAULT_ENTITIES = [
-    'ИП Горев Андраник Куркенович',
-    'ИП Найденова Алина Вячеславовна',
-
+    'Практика кофе',
 ]

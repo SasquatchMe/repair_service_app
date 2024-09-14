@@ -4,9 +4,9 @@
     <h1>Изменить данные точки</h1>
     <form action="{{ url_for('save_object', login=object.login) }}" method="post">
         <label for="login">Логин:</label>
-        <input type="text" id="login" name="login" value="{{ object.login }}" required><br>
+        <input id="login" name="login" required type="text" value="{{ object.login }}"><br>
         <label for="address">Адрес:</label>
-        <input type="text" id="address" name="address" value="{{ object.address }}" required><br>
+        <input id="address" name="address" required type="text" value="{{ object.address }}"><br>
         <label for="entity_id">Наименование компании:</label>
         <select id="entity_id" name="entity_id" required>
             {% for entity in entities %}

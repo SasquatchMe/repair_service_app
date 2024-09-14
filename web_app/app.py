@@ -95,7 +95,7 @@ def save_object(login):
 @app.route('/orders', methods=['GET'])
 @login_required
 def orders_list():
-    orders = Order.select()
+    orders = Order.select().order_by(Order.id.desc())
     return render_template('orders.html', orders=orders)
 
 
@@ -197,7 +197,7 @@ def update_status(order_id):
     order.save()
 
     tg_id = order.user_id.tg_id
-    if current_status_id != 4 and current_status_id != 5 and current_status_id > new_status:
+    if current_status_id != 4 and current_status_id != 5 and current_status_id < new_status.id:
         if new_status.id in (2, 4):
             send_message_about_update_status(tg_id, order.id)
         elif new_status.id == 3:
