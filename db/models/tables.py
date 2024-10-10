@@ -70,6 +70,13 @@ class Order(BaseModel):
     confirm_from_client = BooleanField(default=False)
 
 
+class WebUser(BaseModel):
+    id = AutoField(primary_key=True)
+    username = CharField()
+    password = CharField()
+    entity_id = ForeignKeyField(Entity, on_delete='CASCADE')
+
+
 def create_models():
     db.create_tables(BaseModel.__subclasses__())
     if Status.get_or_none() is None:

@@ -4,16 +4,13 @@ from functools import wraps
 from flask import Flask, request, render_template, redirect, url_for, flash, jsonify, session
 from loguru import logger
 
-from config import DATABASE_PATH, SECRET_KEY
-from db.models.tables import Entity, Order, Object, OrderType, BreakingType, Status
+from config import SECRET_KEY
+from db.models.tables import Entity, Order, Object, OrderType, BreakingType, Status, WebUser, create_models
 from tg_bot.utils.send_message_update import send_message_about_update_status, send_message_about_est_time, \
     send_message_about_decline
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY  # Секретный ключ для сессий
-
-# Пример данных пользователей для демонстрации (позже можно заменить на базу данных)
-users = {'admin': 'admin'}
 
 
 # Декоратор для проверки авторизации
@@ -34,10 +31,11 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        if username in users and users[username] == password:
+        user = WebUser.get_or_none(username=username)
+        if user and user.password == password:
             session['username'] = username
             flash('Вы успешно вошли!', 'success')
-            return redirect(url_for('objects_list'))
+            return redirect(url_for('orders_list'))
         else:
             flash('Неправильное имя пользователя или пароль', 'danger')
 
@@ -51,11 +49,16 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/')
+@app.route('/objects')
 @login_required
 def objects_list():
-    objects = Object.select()
-    entities = Entity.select()
+    user = WebUser.get_or_none(username=session.get('username'))
+    if user.username != 'admin':
+        objects = Object.select().where(Object.entity_id == user.entity_id)
+        entities = Entity.select().where(Object.entity_id == user.entity_id)
+    else:
+        objects = Object.select()
+        entities = Entity.select()
     return render_template('objects.html', objects=objects, entities=entities)
 
 
@@ -92,11 +95,18 @@ def save_object(login):
     return redirect(url_for('objects_list'))
 
 
-@app.route('/orders', methods=['GET'])
+@app.route('/', methods=['GET'])
 @login_required
 def orders_list():
-    orders = Order.select().order_by(Order.id.desc())
-    return render_template('orders.html', orders=orders)
+    user = WebUser.get_or_none(username=session.get('username'))
+    if user.username != 'admin':
+        objects = Object.select().where(Object.entity_id == user.entity_id)
+        objects_ids = [o.id for o in objects]
+        orders = Order.select().where(Order.object_id.in_(objects_ids)).order_by(Order.id.desc())
+
+    else:
+        orders = Order.select().order_by(Order.id.desc())
+    return render_template('orders.html', orders=orders, admin=user.username=='admin')
 
 
 @app.route('/order/<int:order_id>')
@@ -109,7 +119,11 @@ def order_detail(order_id):
 @app.route('/entities', methods=['GET'])
 @login_required
 def entities_list():
-    entities = Entity.select()
+    user = WebUser.get_or_none(username=session.get('username'))
+    if user.username != 'admin':
+        entities = Entity.select().where(Entity.id == user.entity_id)
+    else:
+        entities = Entity.select()
     return render_template('entities.html', entities=entities)
 
 
@@ -161,7 +175,11 @@ def get_objects():
 @app.route('/get_entities')
 @login_required
 def get_entities():
-    entities = Entity.select()
+    user = WebUser.get_or_none(username=session.get('username'))
+    if user.username != 'admin':
+        entities = Entity.select().where(Entity.id == user.entity_id)
+    else:
+        entities = Entity.select()
     return jsonify([{'id': entity.id, 'name': entity.name} for entity in entities])
 
 
@@ -237,20 +255,25 @@ def delete_object():
 @app.route('/objects/<int:object_id>/orders', methods=['GET'])
 @login_required
 def object_orders(object_id):
+    user = WebUser.get_or_none(username=session.get('username'))
     orders = Order.select().where(Order.object_id == object_id)
-    return render_template('object_orders.html', orders=orders)
+    return render_template('object_orders.html', orders=orders, admin=user.username == "admin")
 
 
 @app.route('/entities/<int:entity_id>/objects', methods=['GET'])
 @login_required
 def entity_objects(entity_id):
-    objects = Object.select().where(Object.entity_id == entity_id)
-    entity = Entity.get(Entity.id == entity_id)
+    user = WebUser.get_or_none(username=session.get('username'))
+    if user.username != 'admin':
+        objects = Object.select().where(Object.entity_id == entity_id, Object.entity_id == user.entity_id)
+        entity = Entity.get(Entity.id == entity_id, Entity.id == user.entity_id)
+    else:
+        objects = Object.select().where(Object.entity_id == entity_id)
+        entity = Entity.get(Entity.id == entity_id)
     return render_template('entity_objects.html', objects=objects, entity=entity)
 
 
 if __name__ == '__main__':
     logger.debug('Start web_app')
-
-    print(DATABASE_PATH)
+    create_models()
     app.run(debug=True, host='0.0.0.0', port=5000)
