@@ -16,7 +16,7 @@ from tg_bot.utils.send_message_update import send_message_about_update_status, s
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 app.secret_key = SECRET_KEY
-app.permanent_session_lifetime = timedelta(minutes=30)
+app.permanent_session_lifetime = timedelta(seconds=5)
 
 
 # Декоратор для проверки авторизации
