@@ -2,12 +2,12 @@
 {% block content %}
 <div class="container">
     <h1>Авторизация</h1>
-    <form action="{{ url_for('login') }}" method="post" class="compact-form">
+    <form action="{{ url_for('login') }}" class="compact-form" method="post">
         <label for="username">Имя пользователя:</label>
-        <input type="text" id="username" name="username" required><br>
+        <input id="username" name="username" required type="text"><br>
 
         <label for="password">Пароль:</label>
-        <input type="password" id="password" name="password" required><br>
+        <input id="password" name="password" required type="password"><br>
 
         <button type="submit">Войти</button>
     </form>

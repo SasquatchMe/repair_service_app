@@ -45,8 +45,7 @@ def get_update_message_from_order_db_with_est_time(order_id):
            f"*Дата создания:* {order.date_create}\n"
            f"*Статус заявки: {order.status_id.status}*\n\n"
            f"*Ориентировочное время прибытия мастера: {order.est_date_complete}*\n"
-           f"_Нажмите_ '✅Принимаю', _если время прибытия мастера подходит_\n"
-           f"_Нажмите_ '❌Отказываюсь', _чтобы отменить заявку_")
+           )
     return msg
 
 
@@ -58,4 +57,3 @@ def get_decline_message(order_id):
            f"*Статус заявки: {order.status_id.status}*\n\n"
            f"*Причина отказа: {order.decline_desc}*")
     return msg
-

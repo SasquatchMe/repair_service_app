@@ -36,7 +36,7 @@ class User(BaseModel):
     id = AutoField(primary_key=True)
     phone = CharField()
     tg_id = CharField(null=True)
-    object_id = ForeignKeyField(Object)
+    object_id = ForeignKeyField(Object, on_delete='CASCADE')
 
 
 class OrderType(BaseModel):
@@ -56,7 +56,7 @@ class Order(BaseModel):
     user_id = ForeignKeyField(User, null=True)
     object_id = ForeignKeyField(Object, on_delete='CASCADE')
     status_id = ForeignKeyField(Status, default=1)
-    date_create = DateTimeField(default=datetime.datetime.now().strftime("%d-%m-%Y %H:%M"))
+    date_create = DateTimeField(default=datetime.datetime.now)
     breaking_image_path = CharField(null=True)
     service_sticker_image_path = CharField(null=True)
     model_name = CharField()
@@ -68,6 +68,13 @@ class Order(BaseModel):
     est_date_complete = DateTimeField(null=True)
     date_complete = DateTimeField(null=True)
     confirm_from_client = BooleanField(default=False)
+
+
+class WebUser(BaseModel):
+    id = AutoField(primary_key=True)
+    username = CharField()
+    password = CharField()
+    entity_id = ForeignKeyField(Entity, on_delete='CASCADE')
 
 
 def create_models():
@@ -87,4 +94,3 @@ def create_models():
     if Entity.get_or_none() is None:
         for entity in DEFAULT_ENTITIES:
             Entity.create(name=entity)
-

@@ -5,10 +5,9 @@ import telebot.types
 from loguru import logger
 from telebot import types
 from telebot.types import InputMediaPhoto
-from telebot.types import Message, CallbackQuery
+from telebot.types import Message
 
 from config import WEB_APP_PATH
-from db.models.tables import Order
 from db.query_to_db.create_order_in_db import create_order
 from db.query_to_db.query_to_db import get_order_type_id, get_breaking_type_id
 from tg_bot.bot_instance import bot
@@ -246,21 +245,3 @@ def get_a_comment(message: Message):
 
     bot.delete_state(message.from_user.id, message.chat.id)
     bot.send_message(message.chat.id, text=return_to_menu, parse_mode='Markdown')
-
-
-@bot.callback_query_handler(func=lambda call: True)
-def handle_query(call: CallbackQuery):
-    order_id = ''.join(s for s in call.data if s.isdigit())
-    if call.data.startswith('cb_confirm_yes'):
-        bot.send_message(call.message.chat.id, text='🕜Ожидайте приезда мастера')
-        bot.edit_message_reply_markup(call.message.chat.id, message_id=call.message.message_id, reply_markup=None)
-        order: Order = Order.get(Order.id == order_id)
-        order.confirm_from_client = True
-        order.save()
-    elif 'cb_confirm_no' in call.data:
-        bot.send_message(call.message.chat.id, text='❌Заявка отменена')
-        bot.edit_message_reply_markup(call.message.chat.id, message_id=call.message.message_id, reply_markup=None)
-        bot.delete_state(call.message.from_user.id)
-        order = Order.get(Order.id == order_id)
-        order.status_id = 5
-        order.save()
